@@ -1,0 +1,31 @@
+{
+  "name": "icds-risk-monitoring-system",
+  "version": "1.0.0",
+  "description": "AI-Based Developmental Risk Monitoring & Referral System for ICDS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "seed": "node seeds/seedAll.js",
+    "seed:centres": "node seeds/seedCentres.js",
+    "seed:children": "node seeds/seedChildren.js",
+    "seed:workers": "node seeds/seedWorkers.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "express-validator": "^7.2.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.12.0",
+    "sequelize": "^6.37.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}

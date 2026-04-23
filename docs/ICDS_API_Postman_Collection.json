@@ -1,0 +1,666 @@
+{
+  "info": {
+    "name": "ICDS Risk Monitoring System API",
+    "description": "AI-Based Developmental Risk Monitoring & Referral System for ICDS\n\nHow to use:\n1. Run 'Login as Admin' first\n2. Token is auto-saved to collection variable\n3. All other requests use it automatically",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. AUTH",
+      "item": [
+        {
+          "name": "1.1 Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    console.log('Token saved successfully!');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@icds-ap.gov.in\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "LOGIN FIRST! Token is auto-saved for all other requests.\n\nOther credentials:\n- CDPO: cdpo.visakhapatnam@icds-ap.gov.in / cdpo123\n- Supervisor: sup.anakapalle@icds-ap.gov.in / sup123\n- AWW: aww.vis.1@icds-ap.gov.in / aww123"
+          }
+        },
+        {
+          "name": "1.2 Login as CDPO",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"cdpo.visakhapatnam@icds-ap.gov.in\",\n  \"password\": \"cdpo123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.3 Login as AWW",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"aww.vis.1@icds-ap.gov.in\",\n  \"password\": \"aww123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "1.4 Get My Profile",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        },
+        {
+          "name": "1.5 List All Users (Admin/CDPO only)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "users"]
+            }
+          }
+        },
+        {
+          "name": "1.6 Register New User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test AWW Worker\",\n  \"email\": \"test.aww@icds-ap.gov.in\",\n  \"phone\": \"+919876543210\",\n  \"password\": \"test123\",\n  \"role\": \"aww\",\n  \"district\": \"Visakhapatnam\",\n  \"mandal\": \"Anakapalle\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. CHILDREN",
+      "item": [
+        {
+          "name": "2.1 List All Children",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/children?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.2 List Children (Filter by District)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/children?district=Kurnool&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children"],
+              "query": [
+                { "key": "district", "value": "Kurnool" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "2.3 List Children (Filter by Risk Level)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/children?riskLevel=critical&page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children"],
+              "query": [
+                { "key": "riskLevel", "value": "critical" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            },
+            "description": "Try: low, moderate, high, critical"
+          }
+        },
+        {
+          "name": "2.4 Register New Child",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data._id) {",
+                  "    pm.collectionVariables.set('childId', jsonData.data._id);",
+                  "    console.log('Child ID saved: ' + jsonData.data._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Aarav Kumar\",\n  \"gender\": \"male\",\n  \"dateOfBirth\": \"2024-06-15\",\n  \"parentName\": \"Priya Kumar\",\n  \"parentPhone\": \"+919876543210\",\n  \"centreId\": \"REPLACE_WITH_CENTRE_UUID\",\n  \"district\": \"Visakhapatnam\",\n  \"mandal\": \"Anakapalle\",\n  \"village\": \"Village 5\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/children",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children"]
+            },
+            "description": "Replace centreId with a real UUID from GET /api/dashboard/geo/centres"
+          }
+        },
+        {
+          "name": "2.5 Get Child Full Profile (with history)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/children/{{childId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children", "{{childId}}"]
+            },
+            "description": "First run 'List All Children' and copy an _id value, or register a new child"
+          }
+        },
+        {
+          "name": "2.6 Full 5-Domain Screening",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"domains\": {\n    \"grossMotor\": [\n      { \"milestoneId\": \"gm_13_1\", \"achieved\": true },\n      { \"milestoneId\": \"gm_13_2\", \"achieved\": true },\n      { \"milestoneId\": \"gm_13_3\", \"achieved\": false, \"notes\": \"Needs support climbing\" },\n      { \"milestoneId\": \"gm_13_4\", \"achieved\": false },\n      { \"milestoneId\": \"gm_13_5\", \"achieved\": false }\n    ],\n    \"fineMotor\": [\n      { \"milestoneId\": \"fm_13_1\", \"achieved\": true },\n      { \"milestoneId\": \"fm_13_2\", \"achieved\": true },\n      { \"milestoneId\": \"fm_13_3\", \"achieved\": true },\n      { \"milestoneId\": \"fm_13_4\", \"achieved\": false }\n    ],\n    \"language\": [\n      { \"milestoneId\": \"lc_13_1\", \"achieved\": false, \"notes\": \"Uses less than 5 words\" },\n      { \"milestoneId\": \"lc_13_2\", \"achieved\": false },\n      { \"milestoneId\": \"lc_13_3\", \"achieved\": false },\n      { \"milestoneId\": \"lc_13_4\", \"achieved\": false },\n      { \"milestoneId\": \"lc_13_5\", \"achieved\": false }\n    ],\n    \"cognitive\": [\n      { \"milestoneId\": \"cog_13_1\", \"achieved\": true },\n      { \"milestoneId\": \"cog_13_2\", \"achieved\": true },\n      { \"milestoneId\": \"cog_13_3\", \"achieved\": false },\n      { \"milestoneId\": \"cog_13_4\", \"achieved\": false }\n    ],\n    \"socioEmotional\": [\n      { \"milestoneId\": \"se_13_1\", \"achieved\": true },\n      { \"milestoneId\": \"se_13_2\", \"achieved\": true },\n      { \"milestoneId\": \"se_13_3\", \"achieved\": true },\n      { \"milestoneId\": \"se_13_4\", \"achieved\": true }\n    ]\n  },\n  \"notes\": \"Child shows significant language delay. Mother reports child is very quiet at home.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/children/{{childId}}/screen",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children", "{{childId}}", "screen"]
+            },
+            "description": "This is the CORE endpoint! Uses 13-24 month milestones.\nThe language domain is intentionally set to all false to demonstrate HIGH risk detection.\n\nReplace {{childId}} with a real child _id from the list endpoint.\n\nResponse shows:\n- Risk level & composite score\n- Per-domain percentile scores\n- Flagged domains\n- Auto-generated referral (if high/critical)"
+          }
+        },
+        {
+          "name": "2.7 Quick Screening (Backward Compatible)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weight\": 7.5,\n  \"height\": 68,\n  \"speechDelay\": true,\n  \"motorSkills\": \"Poor\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/children/{{childId}}/screen-quick",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children", "{{childId}}", "screen-quick"]
+            },
+            "description": "Simplified screening compatible with your teammate's original format.\nStill uses the 5-domain ASQ-3 engine internally."
+          }
+        },
+        {
+          "name": "2.8 Add Anthropometric Data",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"weight\": 8.2,\n  \"height\": 72,\n  \"headCircumference\": 44,\n  \"midUpperArmCircumference\": 13.5,\n  \"weightForAge\": \"underweight\",\n  \"heightForAge\": \"normal\",\n  \"weightForHeight\": \"normal\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/children/{{childId}}/anthropometrics",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "children", "{{childId}}", "anthropometrics"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. REFERRALS",
+      "item": [
+        {
+          "name": "3.1 List All Referrals",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/referrals?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "referrals"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "3.2 Referrals by Status (Pending)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/referrals?status=pending&sortBy=urgency",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "referrals"],
+              "query": [
+                { "key": "status", "value": "pending" },
+                { "key": "sortBy", "value": "urgency" }
+              ]
+            },
+            "description": "Status options: pending, in_progress, completed, cancelled, overdue\nSort options: urgency, recent, overdue"
+          }
+        },
+        {
+          "name": "3.3 Urgency Queue (PPT Slide 7)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/referrals/urgency-queue",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "referrals", "urgency-queue"]
+            },
+            "description": "Returns the urgency queue exactly as shown in PPT slide 7:\nREF-3421 (2d, CRITICAL), REF-3389 (4d, HIGH), etc.\nSorted: emergency first, then urgent, then by days open."
+          }
+        },
+        {
+          "name": "3.4 Update Referral Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\",\n  \"appointmentDate\": \"2026-04-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/referrals/REPLACE_WITH_REFERRAL_ID/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "referrals", "REPLACE_WITH_REFERRAL_ID", "status"]
+            },
+            "description": "Get a referral _id from 'List All Referrals' and replace in the URL.\n\nStatus flow: pending → in_progress → completed\nYou can also set: outcome, outcomeNotes, appointmentDate"
+          }
+        },
+        {
+          "name": "3.5 Complete a Referral",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\",\n  \"outcome\": \"intervention_started\",\n  \"outcomeNotes\": \"Speech therapy sessions started, 2x per week\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/referrals/REPLACE_WITH_REFERRAL_ID/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "referrals", "REPLACE_WITH_REFERRAL_ID", "status"]
+            },
+            "description": "Outcome options:\n- intervention_started\n- referred_higher\n- resolved\n- no_intervention_needed\n- lost_to_followup"
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. DASHBOARD - Screening (Slide 5)",
+      "item": [
+        {
+          "name": "4.1 Screening KPIs (Top Cards)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/screening/kpis",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "screening", "kpis"]
+            },
+            "description": "Returns: childrenScreened, activeCentres, screeningCoverage%, childrenFlagged%\nMaps to: PPT Slide 5 top KPI cards"
+          }
+        },
+        {
+          "name": "4.2 Screening KPIs (Filtered by District)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/screening/kpis?district=Visakhapatnam",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "screening", "kpis"],
+              "query": [
+                { "key": "district", "value": "Visakhapatnam" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "4.3 Monthly Screening Trend (Chart)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/screening/monthly-trend?year=2026",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "screening", "monthly-trend"],
+              "query": [
+                { "key": "year", "value": "2026" }
+              ]
+            },
+            "description": "Returns monthly screened + flagged counts for chart.\nMaps to: PPT Slide 5 'Monthly Screening Trend' chart"
+          }
+        },
+        {
+          "name": "4.4 AWC Performance by District (Table)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/screening/by-district",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "screening", "by-district"]
+            },
+            "description": "Returns per-district: awcCount, coverage%, riskPercent\nMaps to: PPT Slide 5 'AWC Performance Summary' table"
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. DASHBOARD - Risk (Slide 6)",
+      "item": [
+        {
+          "name": "5.1 Risk Distribution (Pie Chart)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/risk/distribution",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "risk", "distribution"]
+            },
+            "description": "Returns: low/moderate/high/critical counts + percentages\nMaps to: PPT Slide 6 'Risk Distribution' pie chart"
+          }
+        },
+        {
+          "name": "5.2 Domain-Wise Delay Burden (Bar Chart)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/risk/by-domain",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "risk", "by-domain"]
+            },
+            "description": "Returns: delay% per domain (Gross Motor, Fine Motor, Language, Cognitive, Socio-Emot.)\nMaps to: PPT Slide 6 'Domain-Wise Delay Burden' bar chart"
+          }
+        },
+        {
+          "name": "5.3 Age-Band Risk Count (Table)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/risk/by-age",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "risk", "by-age"]
+            },
+            "description": "Returns: screened + atRisk% per age band (0-12mo, 13-24mo, etc.)\nMaps to: PPT Slide 6 'Age-Band Risk Count' table"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. DASHBOARD - Referrals (Slide 7)",
+      "item": [
+        {
+          "name": "6.1 Referral KPIs (Top Cards)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/referrals/kpis",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "referrals", "kpis"]
+            },
+            "description": "Returns: totalReferred, completionRate%, avgFlagToReferralDays, overdueCount\nMaps to: PPT Slide 7 top KPI cards"
+          }
+        },
+        {
+          "name": "6.2 Monthly Referral Status (Chart)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/referrals/monthly?year=2026",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "referrals", "monthly"],
+              "query": [
+                { "key": "year", "value": "2026" }
+              ]
+            },
+            "description": "Returns: monthly completed vs pending counts\nMaps to: PPT Slide 7 'Monthly Referral Status' chart"
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. DASHBOARD - Workforce (Slide 8)",
+      "item": [
+        {
+          "name": "7.1 Workforce Capacity Matrix",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/workforce/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "workforce", "summary"]
+            },
+            "description": "Returns: capacityMatrix (role/total/trained/%) + trainingModeDistribution\nMaps to: PPT Slide 8 workforce table + training pie charts"
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. DASHBOARD - Geo Analytics (Slide 9)",
+      "item": [
+        {
+          "name": "8.1 All AWC Map Markers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/geo/centres",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "geo", "centres"]
+            },
+            "description": "Returns: all AWC locations with lat/lng, riskScore, riskLevel\nMaps to: PPT Slide 9 heatmap markers for Leaflet.js"
+          }
+        },
+        {
+          "name": "8.2 AWC Markers (Filter by District)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/geo/centres?district=Kurnool",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "geo", "centres"],
+              "query": [
+                { "key": "district", "value": "Kurnool" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.3 AWC Markers (Filter by Risk Level)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/geo/centres?riskLevel=critical",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "geo", "centres"],
+              "query": [
+                { "key": "riskLevel", "value": "critical" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "8.4 District Risk Scores (Bar Chart)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard/geo/district-risk",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard", "geo", "district-risk"]
+            },
+            "description": "Returns: district name + avg risk score + centre count\nMaps to: PPT Slide 9 'Top High-Risk Districts' bar chart"
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. HEALTH CHECK",
+      "item": [
+        {
+          "name": "9.1 Server Health",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            },
+            "description": "No auth required. Check if server is running."
+          }
+        }
+      ]
+    }
+  ]
+}
