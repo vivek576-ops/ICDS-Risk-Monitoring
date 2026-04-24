@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const { Sequelize } = require("sequelize");
 
-// ─── MongoDB Connection ───
 const connectMongo = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI);
@@ -12,15 +11,17 @@ const connectMongo = async () => {
   }
 };
 
-// ─── PostgreSQL Connection ───
-// This logic checks if you provided a single URL (Production) or separate parts (Local)
-const sequelize = process.env.DATABASE_URL
-  ? new Sequelize(process.env.DATABASE_URL, {
+// This version checks both possible names (DATABASE_URL and PG_DATABASE_URL)
+const dbUrl = process.env.DATABASE_URL || process.env.PG_DATABASE_URL;
+
+const sequelize = dbUrl
+  ? new Sequelize(dbUrl, {
       dialect: "postgres",
+      protocol: "postgres",
       dialectOptions: {
         ssl: {
           require: true,
-          rejectUnauthorized: false, // Required for Neon.tech
+          rejectUnauthorized: false,
         },
       },
       logging: false,
@@ -31,7 +32,6 @@ const sequelize = process.env.DATABASE_URL
       process.env.PG_PASSWORD,
       {
         host: process.env.PG_HOST,
-        port: process.env.PG_PORT,
         dialect: "postgres",
         logging: false,
       }
@@ -42,11 +42,13 @@ const connectPostgres = async () => {
     await sequelize.authenticate();
     console.log(`✅ PostgreSQL connected successfully`);
 
-    // In production, we use { alter: true } for the first run to create tables
+    // Only sync if explicitly told to, or on first cloud run
     await sequelize.sync({ alter: true });
     console.log("✅ PostgreSQL tables synced");
   } catch (error) {
-    console.error(`❌ PostgreSQL connection error: ${error.message}`);
+    // This will now print the FULL error so we can see what's wrong
+    console.error(`❌ PostgreSQL connection error: ${error.name} - ${error.message}`);
+    if (error.original) console.error(`Original Error: ${error.original.message}`);
     process.exit(1);
   }
 };
